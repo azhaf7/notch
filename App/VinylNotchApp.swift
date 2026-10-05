@@ -28,7 +28,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     func applicationDidFinishLaunching(_ notification: Notification) {
         let prefs = Preferences.shared
         FrameDriver.shared.onTick = { [weak self] dt in self?.model.tick(dt) }
-        SettingsWindowController.shared.model = model
+        LibraryWindowController.shared.model = model
+        PlaylistPlayer.shared.model = model
 
         prefs.$musicSource.removeDuplicates().sink { [weak self] source in
             DispatchQueue.main.async { self?.connect(source) }
@@ -38,9 +39,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             guard let m = self?.model else { return }
             switch id {
             case 1: m.toggle()
-            case 2: m.next()
+            case 2: PlaylistPlayer.shared.playlist != nil && !m.isLive ? PlaylistPlayer.shared.skip() : m.next()
             case 3: m.previous()
             case 4: self?.notch.toggleHidden()
+            case 5: CollectionStore.shared.toggleLike(m.track)
             default: break
             }
         }
@@ -49,9 +51,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         notch.show()
     }
 
-    /// Opening the app again from Applications or Spotlight shows Settings, since there's no window.
+    /// Opening the app again from Applications or Spotlight shows the Library, since there's no window.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        SettingsWindowController.shared.show()
+        LibraryWindowController.shared.show()
         return false
     }
 
@@ -75,6 +77,10 @@ struct MenuContent: View {
             .keyboardShortcut(" ", modifiers: [])
         Button("Next") { model.next() }
         Button("Previous") { model.previous() }
+        Button(CollectionStore.shared.isLiked(model.track) ? "Unlike Song" : "Like Song") { CollectionStore.shared.toggleLike(model.track) }
+        Divider()
+        Button("Library…") { LibraryWindowController.shared.show() }
+            .keyboardShortcut("l")
         Divider()
         Button("Hide the Notch") { app.notch.toggleHidden() }
             .keyboardShortcut("n", modifiers: [.control, .option])
@@ -90,23 +96,8 @@ struct MenuContent: View {
     }
 }
 
-/// A plain window for Settings, opened from the notch's gear, the menu, or by reopening the app.
+/// Settings live in the Library window, next to History and Collection.
 final class SettingsWindowController {
     static let shared = SettingsWindowController()
-    var model: PlayerModel?
-    private var window: NSWindow?
-
-    func show() {
-        if window == nil, let model {
-            let w = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 460, height: 560),
-                             styleMask: [.titled, .closable, .miniaturizable], backing: .buffered, defer: false)
-            w.title = "Vinyl Notch Settings"
-            w.isReleasedWhenClosed = false
-            w.contentView = NSHostingView(rootView: SettingsForm(model: model))
-            w.center()
-            window = w
-        }
-        NSApp.activate(ignoringOtherApps: true)
-        window?.makeKeyAndOrderFront(nil)
-    }
+    func show() { LibraryWindowController.shared.show(.settings) }
 }

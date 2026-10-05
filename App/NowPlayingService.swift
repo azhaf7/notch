@@ -111,7 +111,9 @@ final class NowPlayingService: PlaybackService {
 
     private func send(_ command: String) {
         guard let source, isRunning(source), allowed[source] == true else { return }
-        _ = run(cache: false, "tell application \"\(source.appName)\"\nwith timeout of 3 seconds\n\(command)\nend timeout\nend tell")
+        StayInFront.around {
+            _ = run(cache: false, "tell application \"\(source.appName)\"\nwith timeout of 3 seconds\n\(command)\nend timeout\nend tell")
+        }
         quietUntil = Date().addingTimeInterval(1.5)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) { [weak self] in self?.poll() }
     }

@@ -74,7 +74,6 @@ final class PlayerModel {
     @ObservationIgnored private var shadowH = Tween(12, duration: 850, curve: .armSwing)
     @ObservationIgnored private var shadowOp = Tween(0.38, duration: 450, curve: .ease, jump: 0.01)
     @ObservationIgnored private var wasLow: Bool?
-    @ObservationIgnored private var crackling = false
     @ObservationIgnored private var stuck = 0.0
     @ObservationIgnored private var listened = 0.0
     @ObservationIgnored private var timers: [DispatchWorkItem] = []
@@ -203,10 +202,6 @@ final class PlayerModel {
 
         applyArm(p, dt: dt, tiltOverride: tiltOverride)
 
-        let want = motor && armLow && prefs.sound
-        SoundEngine.shared.enabled = prefs.sound
-        if want != crackling { crackling = want; SoundEngine.shared.crackle(want) }
-
         if motor {
             let before = listened
             listened += dt
@@ -233,10 +228,7 @@ final class PlayerModel {
         if tilt != armTilt { armTilt = tilt }
         if shadowH.value != armShadowH { armShadowH = shadowH.value }
         if shadowOp.value != armShadowOpacity { armShadowOpacity = shadowOp.value }
-        if armLow != wasLow {
-            if armLow && wasLow != nil && prefs.sound { SoundEngine.shared.needleDrop() }
-            wasLow = armLow
-        }
+        if armLow != wasLow { wasLow = armLow }
     }
 
     // MARK: Transport
@@ -260,6 +252,9 @@ final class PlayerModel {
             self.motor = true
             self.remotePlaying = true
             if send { self.service.play() }
+            if !(self.isLive && self.track.sourceID == nil) {
+                HistoryStore.shared.record(self.track, source: self.service.name)
+            }
         }
     }
 
@@ -543,26 +538,7 @@ final class PlayerModel {
 
     // MARK: Share
 
-    func shareURL() -> URL? {
-        func enc(_ s: String) -> String {
-            var allowed = CharacterSet.alphanumerics
-            allowed.insert(charactersIn: "-._~")
-            return s.addingPercentEncoding(withAllowedCharacters: allowed) ?? s
-        }
-        let from = prefs.senderName.trimmingCharacters(in: .whitespaces).isEmpty ? "A friend" : prefs.senderName
-        var fields = [("song", track.title), ("by", track.artist), ("from", from), ("pet", PetSpec.at(pet).name)]
-        // The exact cover, so the friend sees the right artwork without a search.
-        if let art = ArtworkService.shared.remoteURL(for: track) { fields.append(("art", art)) }
-        // From Spotify: link the exact track, not a search.
-        if let id = track.sourceID, id.hasPrefix("spotify:track:") {
-            fields.append(("spotify", String(id.dropFirst("spotify:track:".count))))
-        }
-        let frag = fields
-            .map { $0.0 + "=" + enc($0.1) }.joined(separator: "&")
-        var base = prefs.shareBaseURL.trimmingCharacters(in: .whitespaces)
-        if let hash = base.firstIndex(of: "#") { base = String(base[..<hash]) }
-        return URL(string: base + "#" + frag)
-    }
+    func shareURL() -> URL? { ShareLinks.url(for: track, pet: PetSpec.at(pet).name) }
 
     func copyShareLink() {
         guard let url = shareURL() else { return }
@@ -583,5 +559,34 @@ final class PlayerModel {
         d.set(wearPhones, forKey: "wearPhones"); d.set(wearShades, forKey: "wearShades"); d.set(wearScarf, forKey: "wearScarf")
         d.set(listened, forKey: "listenedMs")
         lastSave = Date()
+    }
+}
+
+/// Links that open a song as a sealed record on the web (and on this app via vinyl://).
+enum ShareLinks {
+    static func url(for track: Track, pet: String? = nil) -> URL? {
+        func enc(_ s: String) -> String {
+            var allowed = CharacterSet.alphanumerics
+            allowed.insert(charactersIn: "-._~")
+            return s.addingPercentEncoding(withAllowedCharacters: allowed) ?? s
+        }
+        let prefs = Preferences.shared
+        let from = prefs.senderName.trimmingCharacters(in: .whitespaces).isEmpty ? "A friend" : prefs.senderName
+        var fields = [("song", track.title), ("by", track.artist), ("from", from)]
+        if let pet, prefs.showPet { fields.append(("pet", pet)) }
+        // The exact cover, so the friend sees the right artwork without a search.
+        if let art = ArtworkService.shared.remoteURL(for: track) { fields.append(("art", art)) }
+        // From Spotify: link the exact track, not a search.
+        if let id = track.sourceID, id.hasPrefix("spotify:track:") {
+            fields.append(("spotify", String(id.dropFirst("spotify:track:".count))))
+        }
+        let frag = fields.map { $0.0 + "=" + enc($0.1) }.joined(separator: "&")
+        var base = prefs.shareBaseURL.trimmingCharacters(in: .whitespaces)
+        if let hash = base.firstIndex(of: "#") { base = String(base[..<hash]) }
+        return URL(string: base + "#" + frag)
+    }
+
+    static func message(for track: Track) -> String {
+        "I sent you a record: \(track.title) by \(track.artist)"
     }
 }

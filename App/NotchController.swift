@@ -433,7 +433,23 @@ private struct NotchDetails: View {
                         }
                         .buttonStyle(PressStyle())
                         IconButton(symbol: "forward.end.fill", size: 30, ink: ink) { model.next() }
+                        LikeButton(track: model.track, size: 14, tint: style.accentColor.color)
+                            .padding(.leading, 4)
                         Spacer()
+                        if let url = model.shareURL() {
+                            // AirDrop, Messages, Mail, Copy Link…: the song goes as a sealed record.
+                            ShareLink(item: url, subject: Text(model.track.title), message: Text(ShareLinks.message(for: model.track))) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(ink.ink2)
+                                    .frame(width: 28, height: 28)
+                                    .contentShape(Circle())
+                            }
+                            .buttonStyle(PressStyle())
+                            .help("Share as a record")
+                        }
+                        IconButton(symbol: "square.stack.fill", size: 28, ink: ink) { LibraryWindowController.shared.show(.collection) }
+                            .help("History and collection")
                         IconButton(symbol: "gearshape.fill", size: 28, ink: ink) { SettingsWindowController.shared.show() }
                             .help("Settings")
                     }

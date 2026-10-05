@@ -1,7 +1,7 @@
 import SwiftUI
 import AppKit
 
-/// All of Vinyl Notch's settings.
+/// All of Vinyl Notch's settings, each one about the notch itself.
 struct SettingsForm: View {
     let model: PlayerModel
     @ObservedObject private var prefs = Preferences.shared
@@ -20,7 +20,6 @@ struct SettingsForm: View {
                         }
                     }
                 }
-                Toggle("Needle drop and crackle", isOn: $prefs.sound)
             }
 
             Section("Notch") {
@@ -32,38 +31,42 @@ struct SettingsForm: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
 
-            Section("Stay out of the way") {
-                Toggle("Hide when an app is full screen", isOn: $prefs.hideInFullScreen)
-                Toggle("Hide from screen sharing and recordings", isOn: $prefs.hideFromCapture)
-                Toggle("Save battery (fewer frames on battery)", isOn: $prefs.batterySaver)
-                Text("⌃⌥N hides or shows the notch any time.").font(.caption).foregroundStyle(.secondary)
-            }
-
-            Section("Pet") {
-                Toggle("Show the pet", isOn: $prefs.showPet)
-                Picker("Pet", selection: Binding(get: { model.pet }, set: { model.selectPet($0) })) {
-                    ForEach(Array(PetSpec.all.enumerated()), id: \.offset) { i, p in Text(p.name).tag(i) }
-                }
-                Toggle("Headphones", isOn: Binding(get: { model.wearPhones }, set: { _ in model.toggleHeadphones() }))
-                Toggle("Sunglasses", isOn: Binding(get: { model.wearShades }, set: { _ in model.toggleSunglasses() }))
-                Toggle("Scarf in the album's colour", isOn: Binding(get: { model.wearScarf }, set: { _ in model.toggleScarf() }))
-            }
-
-            Section("Colours") {
+            Section("Theme") {
                 Picker("Theme", selection: Binding(
-                    get: { PlayerStyle.presets.firstIndex(where: { $0.style == prefs.style }) ?? -1 },
+                    get: { PlayerStyle.presets.firstIndex(where: { $0.style == prefs.style }) ?? 0 },
                     set: { i in
                         guard PlayerStyle.presets.indices.contains(i) else { return }
                         prefs.style = PlayerStyle.presets[i].style
                         model.selectVinyl(prefs.style.vinyl == nil ? 0 : VinylStyle.customIndex)
                     })) {
                     ForEach(Array(PlayerStyle.presets.enumerated()), id: \.offset) { i, p in Text(p.name).tag(i) }
-                    if !PlayerStyle.presets.contains(where: { $0.style == prefs.style }) { Text("Custom").tag(-1) }
                 }
-                color("Accent", \.accent, Tokens.accent)
-                color("Record", \.vinyl, RGB(hex: "#101012"))
-                color("Pet", \.pet, PetSpec.at(model.pet).palette["o"] ?? .white)
-                Button("Reset colours") { prefs.style = PlayerStyle(); model.selectVinyl(0) }
+                .pickerStyle(.inline)
+                .labelsHidden()
+            }
+
+            Section("Pet") {
+                Toggle("Show the pet", isOn: $prefs.showPet)
+                if prefs.showPet {
+                    Picker("Pet", selection: Binding(get: { model.pet }, set: { model.selectPet($0) })) {
+                        ForEach(Array(PetSpec.all.enumerated()), id: \.offset) { i, p in Text(p.name).tag(i) }
+                    }
+                    Toggle("Headphones", isOn: Binding(get: { model.wearPhones }, set: { _ in model.toggleHeadphones() }))
+                    Toggle("Sunglasses", isOn: Binding(get: { model.wearShades }, set: { _ in model.toggleSunglasses() }))
+                    Toggle("Scarf in the album's colour", isOn: Binding(get: { model.wearScarf }, set: { _ in model.toggleScarf() }))
+                }
+            }
+
+            Section("Stay out of the way") {
+                Toggle("Hide when an app is full screen", isOn: $prefs.hideInFullScreen)
+                Toggle("Hide from screen sharing and recordings", isOn: $prefs.hideFromCapture)
+                Toggle("Save battery (fewer frames on battery)", isOn: $prefs.batterySaver)
+            }
+
+            Section("Sharing") {
+                TextField("Your name on shared records", text: $prefs.senderName, prompt: Text("A friend"))
+                Text("Share sends the song as a sealed record link that anyone can open in a browser.")
+                    .font(.caption).foregroundStyle(.secondary)
             }
 
             Section("Keyboard shortcuts") {
@@ -79,21 +82,5 @@ struct SettingsForm: View {
             }
         }
         .formStyle(.grouped)
-    }
-
-    private func color(_ title: String, _ key: WritableKeyPath<PlayerStyle, RGB?>, _ fallback: RGB) -> some View {
-        HStack {
-            ColorPicker(title, selection: Binding(
-                get: { (prefs.style[keyPath: key] ?? fallback).color },
-                set: { c in
-                    guard let rgb = RGB(color: c) else { return }
-                    prefs.style[keyPath: key] = RGB(rgb.r, rgb.g, rgb.b)
-                    if key == \PlayerStyle.vinyl { model.selectVinyl(VinylStyle.customIndex) }
-                }), supportsOpacity: false)
-            if prefs.style[keyPath: key] != nil {
-                Button("Default") { prefs.style[keyPath: key] = nil }
-                    .buttonStyle(.borderless)
-            }
-        }
     }
 }

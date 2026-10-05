@@ -5,18 +5,23 @@ Hover over the notch and it opens into a mini player: the record big, with the a
 label, plus the song, album, progress and controls.
 
 It's the notch part of [Vinyl Player](https://github.com/azhaf7/vinyl-player) on its own: no desktop
-turntable, no library, no widgets. Just the notch.
+turntable and no widgets. Just the notch, with your history and collection a click away.
 
 ## What it does
 
 - **Follows your music.** It shows whatever is playing in Spotify or Apple Music, and the record spins
   only while the music plays. If your phone controls Spotify over Spotify Connect, the notch follows along.
 - **Play, pause and skip** from the expanded notch, the menu bar icon, or the keyboard from anywhere:
-  ⌃⌥Space play/pause, ⌃⌥→ next, ⌃⌥← previous, ⌃⌥N hide or show the notch.
+  ⌃⌥Space play/pause, ⌃⌥→ next, ⌃⌥← previous, ⌃⌥N hide or show the notch, ⌃⌥L like.
 - **A pet keeps you company.** Ten pets (Mochi, Bao, Pip, Tofu, Kiki, Nori, Biscuit, Peanut, Quack, Ember)
   with headphones, sunglasses and a scarf in the album's colour. They dance to the music and doze when it
   stops. You can switch the pet off.
-- **Your colours.** Themes, plus the accent, record and pet colours.
+- **Themes.** Classic, Midnight, Bubblegum, Forest and Ocean.
+- **Like and share.** ♥ a song from the open notch (or ⌃⌥L). Share sends it as a sealed record through
+  AirDrop, Messages, Mail, Copy Link and the rest.
+- **History and Collection.** The stack button in the open notch (or **Library…** in the menu) opens
+  History (every song played, plus a weekly recap) and Collection (liked songs, playlists and a crate to
+  flip through).
 - **Lyrics line.** The line being sung scrolls under the title in the open notch (timed lyrics from
   [LRCLIB](https://lrclib.net), a free lyrics library; some songs don't have them).
 - **Scroll to change the volume** of Spotify or Apple Music with the pointer over the notch. A thin arc
@@ -45,9 +50,9 @@ Spotify / Music.
 
 ## Settings
 
-Click the gear in the expanded notch, choose **Settings…** from the menu bar icon, or open Vinyl Notch
-again from Applications. Settings has the music source, the pet, colours, keyboard shortcuts and
-**Open at login**.
+Click the gear in the expanded notch or choose **Settings…** from the menu bar icon. Settings has the
+music source, the notch features, the theme, the pet, hiding, your name on shared records, keyboard
+shortcuts and **Open at login**.
 
 ## Build it yourself
 

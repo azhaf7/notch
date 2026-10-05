@@ -36,3 +36,22 @@ enum FullScreen {
         return false
     }
 }
+
+/// Playing a song through Spotify's or Music's scripting can bring that app's window to the front.
+/// Put back whichever app you were using, so clicking a song in the notch never pulls you away.
+enum StayInFront {
+    static func around(_ work: () -> Void) {
+        let before = NSWorkspace.shared.frontmostApplication
+        work()
+        guard let before else { return }
+        let musicApps: Set<String> = ["com.spotify.client", "com.apple.Music"]
+        if let id = before.bundleIdentifier, musicApps.contains(id) { return }
+        for delay in [0.15, 0.5, 1.0] {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                guard let now = NSWorkspace.shared.frontmostApplication, let id = now.bundleIdentifier,
+                      musicApps.contains(id), !before.isTerminated else { return }
+                before.activate()
+            }
+        }
+    }
+}
