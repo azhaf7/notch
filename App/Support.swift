@@ -71,6 +71,20 @@ final class FrameDriver: NSObject {
     private var reasons: Set<String> = []
     private var last = CACurrentMediaTime()
 
+    /// Cap on frames per second (e.g. 30 on battery); nil runs at the display's rate.
+    var maxFrameRate: Float? {
+        didSet { if oldValue != maxFrameRate { applyRate() } }
+    }
+
+    private func applyRate() {
+        guard let link else { return }
+        if let m = maxFrameRate {
+            link.preferredFrameRateRange = CAFrameRateRange(minimum: min(15, m), maximum: m, preferred: m)
+        } else {
+            link.preferredFrameRateRange = .default
+        }
+    }
+
     private override init() {
         super.init()
         update()
@@ -88,6 +102,7 @@ final class FrameDriver: NSObject {
                 let l = screen.displayLink(target: self, selector: #selector(frame(_:)))
                 l.add(to: .main, forMode: .common)
                 link = l
+                applyRate()
             }
             link?.isPaused = false
             slow?.invalidate(); slow = nil

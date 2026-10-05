@@ -67,6 +67,13 @@ final class Preferences: ObservableObject {
     @Published var shareListening: Bool { didSet { d.set(shareListening, forKey: "shareListening") } }
     @Published var hotKeys: Bool { didSet { d.set(hotKeys, forKey: "hotKeys") } }
     @Published var showPet: Bool { didSet { d.set(showPet, forKey: "showPet") } }
+    @Published var showLyrics: Bool { didSet { d.set(showLyrics, forKey: "showLyrics") } }
+    @Published var announceSongs: Bool { didSet { d.set(announceSongs, forKey: "announceSongs") } }
+    @Published var scrollVolume: Bool { didSet { d.set(scrollVolume, forKey: "scrollVolume") } }
+    @Published var showRecent: Bool { didSet { d.set(showRecent, forKey: "showRecent") } }
+    @Published var hideInFullScreen: Bool { didSet { d.set(hideInFullScreen, forKey: "hideInFullScreen") } }
+    @Published var hideFromCapture: Bool { didSet { d.set(hideFromCapture, forKey: "hideFromCapture") } }
+    @Published var batterySaver: Bool { didSet { d.set(batterySaver, forKey: "batterySaver") } }
 
     /// Where the Shared Record page (web/shared-record) is hosted.
     static let defaultShareBaseURL = "https://azhaf7.github.io/vinyl-player/shared-record/"
@@ -89,6 +96,13 @@ final class Preferences: ObservableObject {
         shareListening = d.object(forKey: "shareListening") as? Bool ?? true
         hotKeys = d.object(forKey: "hotKeys") as? Bool ?? true
         showPet = d.object(forKey: "showPet") as? Bool ?? true
+        showLyrics = d.object(forKey: "showLyrics") as? Bool ?? true
+        announceSongs = d.object(forKey: "announceSongs") as? Bool ?? true
+        scrollVolume = d.object(forKey: "scrollVolume") as? Bool ?? true
+        showRecent = d.object(forKey: "showRecent") as? Bool ?? true
+        hideInFullScreen = d.object(forKey: "hideInFullScreen") as? Bool ?? true
+        hideFromCapture = d.object(forKey: "hideFromCapture") as? Bool ?? true
+        batterySaver = d.object(forKey: "batterySaver") as? Bool ?? true
         style = d.data(forKey: "playerStyle").flatMap { try? JSONDecoder().decode(PlayerStyle.self, from: $0) } ?? PlayerStyle()
     }
 

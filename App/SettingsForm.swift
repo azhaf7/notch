@@ -23,6 +23,22 @@ struct SettingsForm: View {
                 Toggle("Needle drop and crackle", isOn: $prefs.sound)
             }
 
+            Section("Notch") {
+                Toggle("Show the lyrics line", isOn: $prefs.showLyrics)
+                Toggle("Show new songs for a moment", isOn: $prefs.announceSongs)
+                Toggle("Scroll over the notch to change the volume", isOn: $prefs.scrollVolume)
+                Toggle("Show recent songs when it opens", isOn: $prefs.showRecent)
+                Text("Lyrics come from LRCLIB, a free lyrics library. Some songs don't have timed lyrics there.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+
+            Section("Stay out of the way") {
+                Toggle("Hide when an app is full screen", isOn: $prefs.hideInFullScreen)
+                Toggle("Hide from screen sharing and recordings", isOn: $prefs.hideFromCapture)
+                Toggle("Save battery (fewer frames on battery)", isOn: $prefs.batterySaver)
+                Text("⌃⌥N hides or shows the notch any time.").font(.caption).foregroundStyle(.secondary)
+            }
+
             Section("Pet") {
                 Toggle("Show the pet", isOn: $prefs.showPet)
                 Picker("Pet", selection: Binding(get: { model.pet }, set: { model.selectPet($0) })) {

@@ -2,7 +2,7 @@ import AppKit
 import Carbon.HIToolbox
 
 /// System-wide shortcuts that work even when the player is hidden:
-/// ⌃⌥Space play/pause, ⌃⌥→ next, ⌃⌥← previous.
+/// ⌃⌥Space play/pause, ⌃⌥→ next, ⌃⌥← previous, ⌃⌥N hide or show the notch.
 /// Carbon hot keys don't need Accessibility permission.
 final class HotKeys {
     static let shared = HotKeys()
@@ -17,6 +17,7 @@ final class HotKeys {
         Shortcut(id: 1, keyCode: kVK_Space, label: "⌃⌥Space  Play / pause"),
         Shortcut(id: 2, keyCode: kVK_RightArrow, label: "⌃⌥→  Next song"),
         Shortcut(id: 3, keyCode: kVK_LeftArrow, label: "⌃⌥←  Previous song"),
+        Shortcut(id: 4, keyCode: kVK_ANSI_N, label: "⌃⌥N  Hide or show the notch"),
     ]
 
     var onPress: ((UInt32) -> Void)?

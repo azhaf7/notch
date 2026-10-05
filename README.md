@@ -12,11 +12,24 @@ turntable, no library, no widgets. Just the notch.
 - **Follows your music.** It shows whatever is playing in Spotify or Apple Music, and the record spins
   only while the music plays. If your phone controls Spotify over Spotify Connect, the notch follows along.
 - **Play, pause and skip** from the expanded notch, the menu bar icon, or the keyboard from anywhere:
-  ⌃⌥Space play/pause, ⌃⌥→ next, ⌃⌥← previous.
+  ⌃⌥Space play/pause, ⌃⌥→ next, ⌃⌥← previous, ⌃⌥N hide or show the notch.
 - **A pet keeps you company.** Ten pets (Mochi, Bao, Pip, Tofu, Kiki, Nori, Biscuit, Peanut, Quack, Ember)
   with headphones, sunglasses and a scarf in the album's colour. They dance to the music and doze when it
   stops. You can switch the pet off.
 - **Your colours.** Themes, plus the accent, record and pet colours.
+- **Lyrics line.** The line being sung scrolls under the title in the open notch (timed lyrics from
+  [LRCLIB](https://lrclib.net), a free lyrics library; some songs don't have them).
+- **Scroll to change the volume** of Spotify or Apple Music with the pointer over the notch. A thin arc
+  round the record shows the level.
+- **New song toast.** When the song changes, the notch widens for a moment with its title.
+- **Drag the record out to share.** Drag the big record into Messages, Mail or a chat to drop the song's
+  link and cover.
+- **Recent songs.** The open notch shows the last three songs played (or what's up next for the sample
+  songs); click one to play it again. Spotify and Apple Music don't share their queue with other apps.
+- **Stays out of the way.** It's left out of screen sharing and recordings, hides while an app is full
+  screen (videos, presentations, games), and ⌃⌥N hides or shows it any time.
+- **Easy on the battery.** On battery or in Low Power Mode it draws at 30 frames a second, and it barely
+  draws at all while the music is paused.
 - Macs without a notch get a notch-shaped pill at the top of the screen.
 
 ## Install

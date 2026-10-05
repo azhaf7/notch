@@ -21,6 +21,9 @@ protocol PlaybackService: AnyObject {
     /// The player switched to `index` (after the swap animation, or a pick in the crate).
     func select(index: Int)
     func seek(to seconds: Double)
+    /// The music app's own volume, 0–100, or nil when it can't be read.
+    func volume() -> Int?
+    func setVolume(_ value: Int)
     /// Changes made in the music app (paused from the keyboard, next song...). The player runs the
     /// same pet sequence it would for a local press.
     var onRemoteChange: ((RemoteChange) -> Void)? { get set }
@@ -54,6 +57,9 @@ final class MockPlaybackService: PlaybackService {
     func previousTrack() {}
     func select(index: Int) {}
     func seek(to seconds: Double) {}
+    private var level = 70
+    func volume() -> Int? { level }
+    func setVolume(_ value: Int) { level = max(0, min(100, value)) }
     func start() {}
     func stop() {}
 }

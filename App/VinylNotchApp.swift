@@ -40,6 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             case 1: m.toggle()
             case 2: m.next()
             case 3: m.previous()
+            case 4: self?.notch.toggleHidden()
             default: break
             }
         }
@@ -75,6 +76,8 @@ struct MenuContent: View {
         Button("Next") { model.next() }
         Button("Previous") { model.previous() }
         Divider()
+        Button("Hide the Notch") { app.notch.toggleHidden() }
+            .keyboardShortcut("n", modifiers: [.control, .option])
         Toggle("Show the Pet", isOn: $prefs.showPet)
         Picker("Music", selection: $prefs.musicSource) {
             ForEach(MusicSource.allCases) { Text($0.rawValue).tag($0) }

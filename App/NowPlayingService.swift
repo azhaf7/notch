@@ -91,6 +91,18 @@ final class NowPlayingService: PlaybackService {
         send("play track \"\(id)\"")
     }
 
+    func volume() -> Int? {
+        guard let source, isRunning(source), allowed[source] == true,
+              let out = run(cache: true, "tell application \"\(source.appName)\" to return sound volume") else { return nil }
+        return Int(out.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+
+    /// Sent straight away (no quiet period): volume doesn't change what's playing.
+    func setVolume(_ value: Int) {
+        guard let source, isRunning(source), allowed[source] == true else { return }
+        _ = run(cache: false, "tell application \"\(source.appName)\" to set sound volume to \(max(0, min(100, value)))")
+    }
+
     func openPermissionSettings() {
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Automation") {
             NSWorkspace.shared.open(url)
