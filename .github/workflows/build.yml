@@ -1,0 +1,96 @@
+name: Build Vinyl Notch
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Type-check (every error)
+        run: |
+          SDK=$(xcrun --show-sdk-path --sdk macosx)
+          check() { # name, files...
+            name=$1; shift
+            xcrun swiftc -typecheck -parse-as-library -sdk "$SDK" -target arm64-apple-macos14.0 "$@" > "tc-$name.log" 2>&1 || true
+            grep -E "error:" "tc-$name.log" | sed "s#$GITHUB_WORKSPACE/##" | sort -u | head -60 | while IFS= read -r line; do echo "::error::[$name] $line"; done
+            ! grep -q "error:" "tc-$name.log"
+          }
+          ok=0
+          check app $(find App Shared -name '*.swift') || ok=1
+          exit $ok
+
+      - name: Build
+        run: |
+          set +e
+          xcodebuild -project VinylNotch.xcodeproj -target VinylNotch -configuration Release \
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
+            SYMROOT="$PWD/build" build > build.log 2>&1
+          status=$?
+          grep -E "error:|BUILD (SUCCEEDED|FAILED)" build.log | sort -u | head -60
+          # A real app has its program inside; never publish an empty bundle.
+          test $status -eq 0 && test -x "build/Release/Vinyl Notch.app/Contents/MacOS/Vinyl Notch"
+
+      - name: Show errors
+        if: failure()
+        run: |
+          grep -E "error:" build.log | grep -v "^\*\*" | sort -u | head -40 | while IFS= read -r line; do
+            echo "::error::${line//$GITHUB_WORKSPACE\//}"
+          done
+
+      - name: Package zip
+        run: |
+          cd build/Release
+          ditto -c -k --keepParent "Vinyl Notch.app" "$GITHUB_WORKSPACE/VinylNotch.zip"
+
+      - name: Package dmg
+        run: |
+          brew install create-dmg >/dev/null
+          mkdir -p dmg && cp -R "build/Release/Vinyl Notch.app" dmg/
+          tiffutil -cathidpicheck Config/dmg-background.png Config/dmg-background@2x.png -out dmg-background.tiff
+          # Finder layout via AppleScript can be flaky on CI runners: retry, then fall back to a plain dmg.
+          for i in 1 2 3; do
+            rm -f VinylNotch.dmg
+            create-dmg \
+              --volname "Vinyl Notch" \
+              --volicon "build/Release/Vinyl Notch.app/Contents/Resources/AppIcon.icns" \
+              --background dmg-background.tiff \
+              --window-pos 200 120 --window-size 600 400 \
+              --icon-size 112 --text-size 13 \
+              --icon "Vinyl Notch.app" 150 200 --hide-extension "Vinyl Notch.app" \
+              --app-drop-link 450 200 \
+              VinylNotch.dmg dmg/ && break
+            sleep 5
+          done
+          if [ ! -f VinylNotch.dmg ]; then
+            ln -s /Applications dmg/Applications
+            hdiutil create -volname "Vinyl Notch" -srcfolder dmg -ov -format UDZO VinylNotch.dmg
+          fi
+          ls -la VinylNotch.dmg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VinylNotch
+          path: |
+            VinylNotch.dmg
+            VinylNotch.zip
+
+      - name: Publish download
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest VinylNotch.dmg VinylNotch.zip --prerelease --target "$GITHUB_SHA" \
+            --title "Vinyl Notch (latest build)" \
+            --notes "Latest build. Download VinylNotch.dmg, open it and drag Vinyl Notch into Applications. See README → Install."
