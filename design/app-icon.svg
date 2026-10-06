@@ -1,21 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
-<defs><filter id="icon" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000" flood-opacity="0.3"/></filter><filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="20" stdDeviation="22" flood-color="#000" flood-opacity="0.35"/></filter><filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity="0.35"/></filter>
-  <clipPath id="sq"><rect x="100" y="100" width="824" height="824" rx="185"/></clipPath>
-  <linearGradient id="wall" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#2A0F5C"/><stop offset="0.55" stop-color="#8E2A9E"/><stop offset="1" stop-color="#FF8A5B"/></linearGradient></defs>
-<g filter="url(#icon)"><rect x="100" y="100" width="824" height="824" rx="185" fill="url(#wall)"/></g>
+<defs><filter id="icon" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000" flood-opacity="0.3"/></filter>
+  <clipPath id="sq"><rect x="100" y="100" width="824" height="824" rx="185"/></clipPath></defs>
+<g filter="url(#icon)"><rect x="100" y="100" width="824" height="824" rx="185" fill="#ffffff"/></g>
 <g clip-path="url(#sq)">
-  <path d="M 150 100 Q 210 100 210 160 V 420 Q 210 520 310 520 H 714 Q 814 520 814 420 V 160 Q 814 100 874 100 Z" fill="#000"/>
-  
-  <circle cx="512" cy="300" r="150" fill="#0d0d10"/>
-  <circle cx="512" cy="300" r="141" fill="none" stroke="#2a2a30" stroke-width="1.8"/><circle cx="512" cy="300" r="129" fill="none" stroke="#2a2a30" stroke-width="1.8"/><circle cx="512" cy="300" r="117" fill="none" stroke="#2a2a30" stroke-width="1.8"/><circle cx="512" cy="300" r="105" fill="none" stroke="#2a2a30" stroke-width="1.8"/><circle cx="512" cy="300" r="93" fill="none" stroke="#2a2a30" stroke-width="1.8"/><circle cx="512" cy="300" r="81" fill="none" stroke="#2a2a30" stroke-width="1.8"/><circle cx="512" cy="300" r="69" fill="none" stroke="#2a2a30" stroke-width="1.8"/>
-  <path d="M 512 300 L 559.2983543592903 157.65230709666207 A 150 150 0 0 1 621.7533303310731 197.75418599649987 Z" fill="#ffffff" opacity="0.10"/>
-  <path d="M 512 300 L 463.5065649704745 441.9450131531122 A 150 150 0 0 1 412.05859680802644 411.85578182650806 Z" fill="#ffffff" opacity="0.06"/>
-  <circle cx="512" cy="300" r="54" fill="#FF8A5B"/>
-  <circle cx="512" cy="300" r="40.5" fill="none" stroke="#2A0F5C" stroke-width="3.75"/>
-  <circle cx="512" cy="300" r="5.250000000000001" fill="#0a0a0b"/>
-  <rect x="300" y="470" width="424" height="10" rx="5" fill="#fff" opacity="0.25"/>
-  <rect x="300" y="470" width="250" height="10" rx="5" fill="#fff"/>
-  <rect x="100" y="840" width="824" height="84" fill="#000" opacity="0.18"/>
-  <rect x="452" y="868" width="120" height="14" rx="7" fill="#000" opacity="0.35"/></g>
+  <path d="M 300 100 Q 340 100 340 140 V 310 Q 340 380 410 380 H 614 Q 684 380 684 310 V 140 Q 684 100 724 100 Z" fill="#000"/>
+  <circle cx="512" cy="232" r="100" fill="#0d0d0d"/>
+  <circle cx="512" cy="232" r="94" fill="none" stroke="#2a2a2a" stroke-width="1.6"/><circle cx="512" cy="232" r="86" fill="none" stroke="#2a2a2a" stroke-width="1.6"/><circle cx="512" cy="232" r="78" fill="none" stroke="#2a2a2a" stroke-width="1.6"/><circle cx="512" cy="232" r="70" fill="none" stroke="#2a2a2a" stroke-width="1.6"/><circle cx="512" cy="232" r="62" fill="none" stroke="#2a2a2a" stroke-width="1.6"/><circle cx="512" cy="232" r="54" fill="none" stroke="#2a2a2a" stroke-width="1.6"/><circle cx="512" cy="232" r="46" fill="none" stroke="#2a2a2a" stroke-width="1.6"/>
+  <path d="M 512 232 L 542.9 136.9 A 100 100 0 0 1 590.8 170.4 Z" fill="#fff" opacity="0.12"/>
+  <path d="M 512 232 L 481.1 327.1 A 100 100 0 0 1 433.2 293.6 Z" fill="#fff" opacity="0.07"/>
+  <circle cx="512" cy="232" r="36" fill="#fff"/>
+  <circle cx="512" cy="232" r="27" fill="none" stroke="#000" stroke-width="3"/>
+  <circle cx="512" cy="232" r="4" fill="#000"/>
+  <rect x="412" y="348" width="200" height="8" rx="4" fill="#fff" opacity="0.25"/>
+  <rect x="412" y="348" width="118" height="8" rx="4" fill="#fff"/>
+  <rect x="100" y="850" width="824" height="74" fill="#000" opacity="0.06"/>
+  <rect x="462" y="874" width="100" height="12" rx="6" fill="#000" opacity="0.25"/></g>
 <rect x="100.5" y="100.5" width="823" height="823" rx="185" fill="none" stroke="#000" stroke-opacity="0.12"/>
 </svg>

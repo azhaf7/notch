@@ -1,3 +1,5 @@
+<p align="center"><img src="App/Assets.xcassets/AppIcon.appiconset/icon_256.png" width="128" alt="Vinyl Notch icon"></p>
+
 # Vinyl Notch
 
 A tiny vinyl record that spins in your MacBook's notch while you listen, with a pixel pet beside it.
